@@ -1,0 +1,16 @@
+{
+  "name": "pup-demo",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "start": "tsc && node out/index.js"
+  },
+  "dependencies": {
+    "jackal.nodejs": "file:jackal.nodejs-0.0.1.tgz"
+  },
+  "devDependencies": {
+    "@types/node": "^20.3.1",
+    "tscpaths": "^0.0.9",
+    "typescript": "^5.1.3"
+  }
+}
