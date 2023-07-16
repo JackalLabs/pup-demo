@@ -2,9 +2,7 @@ import {
   CustomWallet,
   WalletHandler,
   FileUploadHandler,
-  compressEncryptString,
   cryptString,
-  decryptDecompressString,
   genIv,
   genKey
 } from 'jackal.nodejs'
@@ -137,12 +135,6 @@ async function run() {
   const dec = await cryptString(enc, key, iv, 'decrypt')
   console.log('dec:', dec)
 
-  const compEnc = await compressEncryptString(test, key, iv)
-  console.log('compEnc:', compEnc)
-  const compDec = await decryptDecompressString(compEnc, key, iv)
-  console.log('compDec:', compDec)
-
-
   // console.log(await w.getJackalBalance())
   // const r = await w.makeRnsHandler()
   // console.log(await r.findMyExistingNames())
@@ -187,9 +179,8 @@ async function run() {
 
     const dl = await fileIo.downloadFile({
       rawPath: dirAgain.getMyPath() + fileName,
-      owner: w.getJackalAddress(),
-      isFolder: false
-    },
+      owner: w.getJackalAddress()
+      },
     {
       track: 0
     }) as IFileDownloadHandler
