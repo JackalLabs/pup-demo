@@ -13,6 +13,9 @@ import * as fs from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import ErrnoException = NodeJS.ErrnoException
 
+const fileName = 'app.toml5.txt'
+const sampleDir = 'Node3'
+const downloadOnly = true
 // const { WalletHandler } = require('jackal.js')
 
 const signerChain = 'lupulella-2'
@@ -66,7 +69,6 @@ const testnet = {
   }
 }
 
-const fileName = 'app.toml.txt'
 //
 // interface IFileConfigRaw {
 //   address: string // merkle path of entire file
@@ -142,14 +144,22 @@ async function run() {
   const fileIo = await w.makeFileIoHandler('1.0.9')
   if (!fileIo) throw new Error('no FileIo')
 
-  const sampleDir = 'Node3'
+  fileIo.forceProvider({
+    address: 'string',
+    ip: 'https://testnet5.jwillette.net',
+    totalspace: 'string',
+    burnedContracts: 'string',
+    creator: 'string',
+    keybaseIdentity: 'string',
+    authClaimers: []
+  })
 
   await fileIo.generateInitialDirs(null, [sampleDir])
 
   await fileIo.verifyFoldersExist([sampleDir])
   const dir = await fileIo.downloadFolder("s/" + sampleDir)
   console.log('initial s/Node files')
-  console.log(dir.getChildFiles())
+  console.log('files:', dir.getChildFiles())
 
   fs.readFile(`./test-files/${fileName}`, async function (err: ErrnoException | null, f: Buffer) {
     console.log('In Read!')
@@ -160,6 +170,7 @@ async function run() {
 
     // @ts-ignore
     const handler = await FileUploadHandler.trackFile(toUpload, dir.getMyPath())
+    console.log('handler meta: ', handler.getMeta())
 
     const uploadList: IUploadList = {}
     uploadList[fileName] =  {
@@ -167,7 +178,7 @@ async function run() {
       exists: false,
       handler: handler,
       key: fileName,
-      uploadable: handler.getForPublicUpload()
+      uploadable: await handler.getForUpload()
     }
 
     const tracker = {timer: 0, complete: 0}
@@ -175,10 +186,10 @@ async function run() {
 
     const dirAgain = await fileIo.downloadFolder("s/" + sampleDir)
     console.log('post upload s/Node files')
-    console.log(dirAgain.getChildFiles)
+    console.log('files:', dir.getChildFiles())
 
     const dl = await fileIo.downloadFile({
-      rawPath: dirAgain.getMyPath() + fileName,
+      rawPath: dirAgain.getMyChildPath(fileName),
       owner: w.getJackalAddress()
       },
     {
@@ -187,7 +198,33 @@ async function run() {
 
     fs.writeFile(fileURLToPath(new URL('./test-files/dl', fileName)), new Uint8Array(await dl.receiveBacon().arrayBuffer()), {}, () => {})
 
+    console.log('inner waiting')
+    while (true) continue
   })
+}
+
+async function tryDownload() {
+  const c = await CustomWallet.create('capital chunk piano supreme photo beef age boy retire vote kitchen under')
+  const w = await WalletHandler.trackWallet({ selectedWallet: 'custom', ...testnet }, { customWallet: c })
+  const fileIo = await w.makeFileIoHandler('1.0.9')
+  if (!fileIo) throw new Error('no FileIo')
+
+  const dirAgain = await fileIo.downloadFolder("s/" + sampleDir)
+  console.log('post upload s/Node files')
+  console.log('files:', dirAgain.getChildFiles())
+
+  const dl = await fileIo.downloadFile({
+      rawPath: dirAgain.getMyChildPath(fileName),
+      owner: w.getJackalAddress()
+    },
+    {
+      track: 0
+    }) as IFileDownloadHandler
+
+  fs.writeFile(fileURLToPath(new URL('./test-files/dl', fileName)), new Uint8Array(await dl.receiveBacon().arrayBuffer()), {}, () => {})
+
+  console.log('inner waiting')
+  while (true) continue
 }
 
 // runQuery()
@@ -197,9 +234,18 @@ async function run() {
 //     while (true) continue
 //   })
 
-run()
-  .then(() => console.log('done'))
-  .then(() => {
-    console.log('waiting')
-    while (true) continue
-  })
+(async function() {
+  if (downloadOnly) {
+    await tryDownload()
+      .then(() => {
+        while (true) {}
+      })
+  } else {
+    await run()
+      .then(() => console.log('done'))
+      .then(() => {
+        console.log('waiting')
+        // while (true) continue
+      })
+  }
+})()
