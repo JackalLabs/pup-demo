@@ -15,7 +15,8 @@ import ErrnoException = NodeJS.ErrnoException
 
 const fileName = 'app.toml5.txt'
 const sampleDir = 'Node3'
-const downloadOnly = true
+// const downloadOnly = true
+const downloadOnly = false
 // const { WalletHandler } = require('jackal.js')
 
 const signerChain = 'lupulella-2'
