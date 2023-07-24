@@ -10,13 +10,12 @@ import type {
   IFileDownloadHandler, IUploadList
 } from 'jackal.nodejs'
 import * as fs from 'node:fs'
-import { fileURLToPath } from 'node:url'
 import ErrnoException = NodeJS.ErrnoException
 
-const fileName = 'app.toml5.txt'
+const fileName = 'app.toml4.txt'
 const sampleDir = 'Node3'
-// const downloadOnly = true
-const downloadOnly = false
+const downloadOnly = true
+// const downloadOnly = false
 // const { WalletHandler } = require('jackal.js')
 
 const signerChain = 'lupulella-2'
@@ -197,7 +196,12 @@ async function run() {
       track: 0
     }) as IFileDownloadHandler
 
-    fs.writeFile(fileURLToPath(new URL('./test-files/dl', fileName)), new Uint8Array(await dl.receiveBacon().arrayBuffer()), {}, () => {})
+    fs.writeFile(
+      `./test-files/dl/${fileName}`,
+      new Uint8Array(await dl.receiveBacon().arrayBuffer()),
+      {},
+      () => {}
+    )
 
     console.log('inner waiting')
     while (true) continue
@@ -222,7 +226,11 @@ async function tryDownload() {
       track: 0
     }) as IFileDownloadHandler
 
-  fs.writeFile(fileURLToPath(new URL('./test-files/dl', fileName)), new Uint8Array(await dl.receiveBacon().arrayBuffer()), {}, () => {})
+  fs.writeFileSync(
+    `./test-files/dl/${fileName}`,
+    new Uint8Array(await dl.receiveBacon().arrayBuffer()),
+    {}
+  )
 
   console.log('inner waiting')
   while (true) continue
