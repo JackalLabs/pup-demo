@@ -6,7 +6,7 @@
     "start": "tsc && node out/index.js"
   },
   "dependencies": {
-    "jackal.nodejs": "file:jackal.nodejs-0.0.1.tgz"
+    "@jackallabs/jackal.nodejs": "^1.0.1"
   },
   "devDependencies": {
     "@types/node": "^20.3.1",
