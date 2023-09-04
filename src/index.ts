@@ -41,7 +41,7 @@ async function run() {
   const m = await MnemonicWallet.create(mnemonic)
   const w = await WalletHandler.trackWallet(testnet, m)
 
-  const fileIo = await w.makeFileIoHandler('1.0.9')
+  const fileIo = await w.makeFileIoHandler('1.1.x')
   if (!fileIo) throw new Error('no FileIo')
 
   fileIo.forceProvider({
